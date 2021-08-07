@@ -2,9 +2,10 @@
 
 // Solution 1
 const objectSnakeCase = {
-  firstName: "Ivan",
-  lastName: "Ivanov",
-  dateOfBirth: new Date(),
+  firstName: "Vasiliy",
+  lastName: "Petrov",
+  personAge: 23,
+  dateOfBirth: new Date()
 };
 
 const propertiesToSnakeCaseFirst = (obj) =>
