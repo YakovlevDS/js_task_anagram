@@ -1,76 +1,44 @@
-// ? Task:Реализуйте функцию propertiesToSnakeCase, которая преобразует ключи обьекта из CamelCase в snake_case
+// ? Task:Напишите функцию anagram, которая проверяет, являются ли две строки анаграммами, причем регистр букв не имеет значения. Учитываются лишь символы; пробелы или знаки препинания в расчет не берутся.
 
 // Solution 1
-const objectSnakeCase = {
-  firstName: "Vasiliy",
-  lastName: "Petrov",
-  personAge: 23,
-  dateOfBirth: new Date()
-};
+const anagram = (strA, strB) => {
+  const buildCharObject = (str) => {
+    const charObj = {};
 
-const propertiesToSnakeCaseFirst = (obj) =>
-  Object.entries(obj).reduce(
-    (acc, [key, value]) => ({
-      ...acc,
-      [key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)]: value,
-    }),
-    {}
-  );
+    for (let char of str.replace(/[^\w]/g).toLowerCase()) {
+      charObj[char] = charObj[char] + 1 || 1;
+    }
 
-const propertiesToSnakeCaseSecond = (obj) => {
-  const pairs = Object.entries(obj);
-
-  const mapPair = ([key, value]) => {//Destructuring
-  const mappedKey = key.replace(
-      /[A-Z]/g,
-      (letter) => `_${letter.toLowerCase()}`
-    );//replacement letter
-    return { [mappedKey]: value };//Forming a converted property - values
+    return charObj;
   };
 
-  return pairs.reduce(
-    (accObj, pair) => ({ ...accObj, ...mapPair(pair) }), //Forming a new obj
-    {}
-  );
+  const aCharObject = buildCharObject(strA);
+  const bCharObject = buildCharObject(strB);
+
+  if (Object.keys(aCharObject).length !== Object.keys(bCharObject).length) {
+    return false;
+  }
+
+  for (let char in aCharObject) {
+    if (aCharObject[char] !== bCharObject[char]) {
+      return false;
+    }
+  }
+
+  return true;
 };
-
-console.log(propertiesToSnakeCaseFirst(objectSnakeCase));
-console.log(propertiesToSnakeCaseSecond(objectSnakeCase));
-
 
 
 
 // ! Explanation:
-// Метод reduce() применяет функцию reducer к каждому элементу массива (слева-направо), возвращая одно результирующее значение.
+// Для хранения данных анаграммы стоит выбрать такую структуру, как объектный литерал JavaScript. Ключ в этом случае — символ буквы, значение — количество ее повторений в текущей строке.
 
-// Object.entries(obj) преобразуем объект в массив массивов.вида [[key,value],[key1,value1]...]
-// replace(/[A-Z]/g замена всех больших латинских букв
-//Array.reduce() -метод для накопительного создания нового объекта из пустого {}
-// (letter) => `_${letter.toLowerCase()}`) колбек функция с переданной по очереди БОЛЬШОЙ литерой всех свойств, и  возвращающей "_" с преобразование в нижний регистр литеры letter.toLowerCase().
-// [key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)]: value, - Это возвращаемое в новый объек ключ-значение. Ключ- преобразуется значение -без изменений.
+// Есть и другие условия:
 
-// pairs.reduce((accObj, pair) => ({ ...accObj, ...mapPair(pair) }),{});--тут на входе в колбек буд пустой объект и каждый элемент (пара ключ-значение) от pairs и пропускаем через функцию преобразования пары mapPair. Добавляем накопительно спредом(...) в новый объект accObj.
+// Нужно убедиться в том, что регистр букв при сравнении не учитывается. Просто преобразуем обе строки в нижний или верхний регистр.
+// Исключаем из сравнения все не-символы. Лучше всего работать с регулярными выражениями.
+// Обратите внимание на использование Object.keys() в ответе. Этот метод возвращает массив, содержащий имена или ключи в таком же порядке, в каком они встречаются в объекте. В этом случае массив будет таким:
 
+// [‘f’, ‘i’, ’n’, ‘d’, ‘e’, ‘r’]
 
-// Регулярные выражения могут иметь флаги, которые влияют на поиск.
-
-// В JavaScript их всего шесть:
-
-// i
-// С этим флагом поиск не зависит от регистра: нет разницы между A и a (см. пример ниже).
-// g
-// С этим флагом поиск ищет все совпадения, без него – только первое.
-// m
-// Многострочный режим (рассматривается в главе Многострочный режим якорей ^ $, флаг "m").
-// s
-// Включает режим «dotall», при котором точка . может соответствовать символу перевода строки \n (рассматривается в главе Символьные классы).
-// u
-// Включает полную поддержку юникода. Флаг разрешает корректную обработку суррогатных пар (подробнее об этом в главе Юникод: флаг "u" и класс \p{...}).
-// y
-// Режим поиска на конкретной позиции в тексте (описан в главе Поиск на заданной позиции, флаг "y")
-
-// Регулярное выражение состоит из шаблона и необязательных флагов: g, i, m, u, s, y.
-// Без флагов и специальных символов, которые мы изучим позже, поиск по регулярному выражению аналогичен поиску подстроки.
-// Метод str.match(regexp) ищет совпадения: все, если есть флаг g, иначе только первое.
-// Метод str.replace(regexp, replacement) заменяет совпадения с regexp на replacement: все, если у регулярного выражения есть флаг g, иначе только первое.
-// Метод regexp.test(str) возвращает true, если есть хоть одно совпадение, иначе false.
+// Таким образом, мы получаем свойства объекта без необходимости выполнять объемный цикл. В задаче можно использовать этот способ со свойством .length — для проверки того, есть ли в обеих строках одинаковое количество символов — это важная особенность анаграмм.
