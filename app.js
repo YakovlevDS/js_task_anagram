@@ -2,31 +2,41 @@
 
 // Solution 1
 const anagram = (strA, strB) => {
+  // Обработка строк исключаем не нужные символы
+  const newStrA = strA.toLowerCase().replace(/[^a-z]/g, '');
+  console.log(newStrA);
+  const newStrB = strB.toLowerCase().replace(/[^a-z]/g, '');
+  console.log(newStrB);
+// Создание объекта свойство - символ в строке, значение - количество символов в строке
   const buildCharObject = (str) => {
     const charObj = {};
-
-    for (let char of str.replace(/[^\w]/g).toLowerCase()) {
+    for (let char of str) {
       charObj[char] = charObj[char] + 1 || 1;
     }
+    console.log(charObj);
 
     return charObj;
   };
 
-  const aCharObject = buildCharObject(strA);
-  const bCharObject = buildCharObject(strB);
+  const aCharObject = buildCharObject(newStrA);
+  const bCharObject = buildCharObject(newStrB);
 
+// Проверка длины обработанных строк для более быстрого определения несоответствия.Через преобразование в массивы и определение длин каждого.
   if (Object.keys(aCharObject).length !== Object.keys(bCharObject).length) {
-    return false;
+    return `Увы!!! Данные строки: ${strA} и ${strB} -- НЕ являются анаграммами`;
   }
-
+// Проход по свойствам созданных объектов с количеством каждого символа в строках, сравнение и обределение совпадает или нет
   for (let char in aCharObject) {
     if (aCharObject[char] !== bCharObject[char]) {
       return false;
     }
   }
 
-  return true;
+  return `Поздравляю!!! Данные строки: ${strA} и ${strB} -- являются анаграммами`;
 };
+
+console.log(anagram('fi_n!d__er', 'Fr!!i_e!n_d')); //true
+console.log(anagram('hello', 'bye')); //false 
 
 
 
